@@ -101,7 +101,8 @@
 
         <TextView
             android:id="@+id/tvPlace"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium_font"
             android:textSize="35sp"
@@ -412,7 +413,6 @@
         android:id="@+id/llLine"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/llWeatherDays"
@@ -424,16 +424,27 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvWeatherHourly"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/llLine"
-        android:layout_marginTop="1dp"
+        app:layout_constraintBottom_toTopOf="@id/llStopper"
+        android:layout_marginTop="3dp"
         />
 
 
-
-
+    <LinearLayout
+        android:id="@+id/llStopper"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rvWeatherHourly"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:background="@drawable/row_progress_shape"
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,25 +1,26 @@
 package com.example.myweatherapp.data.network
 
+import com.example.myweatherapp.data.db.entity.Forecast
+import com.example.myweatherapp.data.db.entity.Hour
 import com.example.myweatherapp.data.network.response.CurrentWeatherResponse
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-const val API_KEY = "0a5d78aa5e2141df8fe191622233004"
 
-interface WeatherApi {
-    @GET("current.json")
-    suspend fun getWeatherData(
-        @Query("q") city: String
+interface ForecastApi {
+    @GET("forecast.json")
+    suspend fun getForecastWeatherData(
+        @Query("q") city: String,
+        @Query("days") days: Int = 8
     ): CurrentWeatherResponse
 
 
     companion object {
-        operator fun invoke(): WeatherApi {
+        operator fun invoke(): ForecastApi {
             val requestInterceptor = Interceptor {chain ->
                 val url = chain.request()
                     .url
@@ -41,8 +42,7 @@ interface WeatherApi {
                 .baseUrl("https://api.weatherapi.com/v1/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
-                .create(WeatherApi::class.java)
+                .create(ForecastApi::class.java)
         }
     }
 }
-

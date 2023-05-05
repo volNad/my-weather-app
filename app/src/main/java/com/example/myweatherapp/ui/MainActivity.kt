@@ -16,7 +16,14 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myweatherapp.data.db.entity.Hour
+import com.example.myweatherapp.data.network.ForecastApi
 import com.example.myweatherapp.data.network.WeatherApi
+import com.example.myweatherapp.data.network.response.CurrentWeatherResponse
+import com.example.myweatherapp.ui.weather.current.CurrentWeatherAdapter
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.google.android.gms.location.*
@@ -28,6 +35,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,7 +54,10 @@ class MainActivity : AppCompatActivity(){
     private lateinit var request: LocationRequest
     private lateinit var binding: ActivityMainBinding
     private val weatherApi = WeatherApi()
-
+    private val forecastApi = ForecastApi()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: CurrentWeatherAdapter
+    private lateinit var layoutManager: LinearLayoutManager
 
 
 
@@ -148,7 +159,14 @@ class MainActivity : AppCompatActivity(){
 
 
                       CoroutineScope(Dispatchers.Main).launch{
-                          val currentWeather = weatherApi.getWeatherData("$textCity")
+                          val forecastDeferred = async { forecastApi.getForecastWeatherData("$textCity") }
+                          val currentWeatherDeferred = async { weatherApi.getWeatherData("$textCity") }
+
+                          // Wait for both requests to complete
+                          val forecastWeather = forecastDeferred.await()
+                          val currentWeather = currentWeatherDeferred.await()
+
+                          // Update UI with current weather data
                           val currentHumidity = currentWeather.currentWeatherEntry.humidity.toString()
                           val currentWind = currentWeather.currentWeatherEntry.windKph
                           val currentWindRoundUp = ceil(currentWind).toInt().toString()
@@ -172,6 +190,15 @@ class MainActivity : AppCompatActivity(){
                           binding?.tvTime?.text = "$dayOfWeek, $monthAndDay"
                           binding?.tvWeatherType?.text = condition
                           binding?.ivWeather?.setImageResource(weatherIcon)
+
+                          // Update UI with hourly forecast data
+                          val weatherList = forecastWeather.forecast.forecastday.flatMap { it.hour }
+                          adapter = CurrentWeatherAdapter(weatherList)
+                          recyclerView = findViewById(R.id.rvWeatherHourly)
+                          layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+                          recyclerView.layoutManager = layoutManager
+                          recyclerView.adapter = adapter
+
                       }
 
 
@@ -184,8 +211,8 @@ class MainActivity : AppCompatActivity(){
                   }
               }
 
-
-                  val currentWeather = weatherApi.getWeatherData("$latitude,$longitude")
+                  val forecastWeather = forecastApi.getForecastWeatherData("$latitude,$longitude")
+                  val currentWeather : CurrentWeatherResponse= weatherApi.getWeatherData("$latitude,$longitude")
                   val currentHumidity = currentWeather.currentWeatherEntry.humidity.toString()
                   val currentWind = currentWeather.currentWeatherEntry.windKph
                   val currentWindRoundUp = ceil(currentWind).toInt().toString()
@@ -201,6 +228,17 @@ class MainActivity : AppCompatActivity(){
                   val condition = currentWeather.currentWeatherEntry.condition.text
                   val weatherCode = currentWeather.currentWeatherEntry.condition.code
                   val weatherIcon = getWeatherIconDependOnResponse(weatherCode)
+                  val weatherList = listOf(Hour(forecastWeather.condition,forecastWeather.humidity,
+                      forecastWeather.precipMm,forecastWeather.tempC,forecastWeather.time,
+                      forecastWeather.windKph
+                  ))
+                  adapter = CurrentWeatherAdapter(weatherList)
+                  recyclerView = findViewById(R.id.rvWeatherHourly)
+                  layoutManager = LinearLayoutManager(this@MainActivity)
+                  recyclerView.layoutManager = layoutManager
+                  recyclerView.adapter = adapter
+
+
                   binding?.tvHumidityValue?.text = "$currentHumidity%"
                   binding?.tvWindValue?.text = "$currentWindRoundUp km/h"
                   binding?.tvRainFallValue?.text = "$rainfallRoundUp mm"
@@ -294,6 +332,9 @@ private fun dateToDayFormatter(date: String): String{
     fun showMessage(view: View, message: String) {
         Snackbar.make(view, message, Snackbar.LENGTH_LONG).show()
     }
+
+
+
 
     }
 
