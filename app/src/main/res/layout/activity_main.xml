@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.myweatherapp.ui.MainActivity"
+    android:background="@drawable/ic_background"
+    >
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarMainMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="0dp"
+        >
+
+        <ImageButton
+            android:id="@+id/ivSearch"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="start"
+            android:layout_margin="11dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/search"
+            android:background="@android:color/transparent"
+            android:foregroundGravity="left"
+            />
+
+        <EditText
+            android:id="@+id/etSearchCity"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:layout_margin="5dp"
+            />
+
+        <Button
+            android:id="@+id/btnSearchCity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/semi_transparent_white_50"
+            android:text="SEARCH"
+            android:fontFamily="@font/inter_bold_font"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            />
+
+        <ImageButton
+            android:id="@+id/ivPoint"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:layout_margin="11dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/point"
+            android:background="@android:color/transparent"
+
+            />
+
+        <ImageButton
+            android:id="@+id/ivMore"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitXY"
+            android:layout_gravity="end"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginEnd="25dp"
+            android:src="@drawable/more"
+            android:background="@android:color/transparent"
+
+            />
+
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llPlaceAndTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbarMainMenu"
+        android:layout_marginTop="1dp"
+        android:layout_marginStart="11dp"
+        android:layout_marginEnd="11dp"
+        android:padding="11dp"
+        android:orientation="vertical"
+        >
+
+
+        <TextView
+            android:id="@+id/tvPlace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium_font"
+            android:textSize="35sp"
+            android:textColor="#313341"
+            android:text="Stockholm,
+            Sweden"
+            />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular_font"
+            android:textSize="18sp"
+            android:textColor="#9A938C"
+            android:text="Tue, Jun 30"
+            />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    <ImageView
+        android:id="@+id/ivWeather"
+        android:layout_width="234dp"
+        android:layout_height="217dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/cludy_rain"
+        app:layout_constraintBottom_toTopOf="@id/llWeatherUtilRain"
+        app:layout_constraintEnd_toStartOf="@id/llDegrees"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@id/llPlaceAndTime"
+        app:layout_constraintVertical_bias="0.458" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llDegrees"
+        android:layout_width="130dp"
+        android:layout_height="132dp"
+        android:layout_marginEnd="50dp"
+
+
+        android:orientation="vertical"
+
+        android:padding="11dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivWeather"
+        app:layout_constraintTop_toBottomOf="@id/llPlaceAndTime"
+
+
+        >
+
+
+        <TextView
+            android:id="@+id/tvDegrees"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="15dp"
+
+            android:fontFamily="@font/inter_bold_font"
+            android:gravity="start"
+            android:text="19"
+            android:textColor="#303345"
+            android:textSize="60sp" />
+
+        <TextView
+            android:id="@+id/tvWeatherType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+
+            android:layout_marginStart="13dp"
+            android:fontFamily="@font/inter_regular_font"
+            android:gravity="bottom"
+            android:text="Rainy"
+            android:textColor="#303345"
+            android:textSize="20sp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextView
+        app:layout_constraintStart_toEndOf="@id/llDegrees"
+        app:layout_constraintTop_toBottomOf="@id/llPlaceAndTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/tvCelsiusUtil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_light_font"
+        android:textSize="25sp"
+        android:text="°C"
+        android:textColor="#303345"
+        android:gravity="start"
+        android:layout_gravity="start"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="75dp"
+        />
+
+    <LinearLayout
+        android:id="@+id/llWeatherUtilRain"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llDegrees"
+        android:orientation="horizontal"
+        android:background="@drawable/row_background_shape"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="25dp"
+        >
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="start|center"
+            android:layout_marginTop="5dp"
+            android:elevation="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/umbrella" />
+
+        <TextView
+            android:id="@+id/tvRainFallLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular_font"
+            android:text="RainFall"
+            android:textSize="14sp"
+            android:textColor="#303345"
+            android:layout_gravity="start|center"
+
+            />
+
+        <TextView
+            android:id="@+id/tvRainFallValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular_font"
+            android:text="3cm"
+            android:textSize="14sp"
+            android:textColor="#303345"
+            android:layout_gravity="center"
+            android:layout_marginStart="130dp"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llWeatherUtilWind"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llWeatherUtilRain"
+        android:orientation="horizontal"
+        android:background="@drawable/row_background_shape"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="5dp"
+        >
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="start|center"
+            android:layout_marginTop="5dp"
+            android:elevation="4dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/wind" />
+
+        <TextView
+            android:id="@+id/tvWindLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular_font"
+            android:text="Wind"
+            android:textSize="14sp"
+            android:textColor="#303345"
+            android:layout_gravity="start|center"
+
+            />
+
+        <TextView
+            android:id="@+id/tvWindValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular_font"
+            android:text="19 km/h"
+            android:textSize="14sp"
+            android:textColor="#303345"
+            android:layout_gravity="center"
+            android:layout_marginStart="130dp"
+            />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/llWeatherUtilHumidity"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llWeatherUtilWind"
+        android:orientation="horizontal"
+        android:background="@drawable/row_background_shape"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="5dp"
+        >
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="start|center"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:scaleType="fitCenter"
+            android:elevation="4dp"
+            android:src="@drawable/humidity" />
+
+        <TextView
+            android:id="@+id/tvHumidityLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular_font"
+            android:text="Humidity"
+            android:textSize="14sp"
+            android:textColor="#303345"
+            android:layout_gravity="start|center"
+            android:layout_marginStart="15dp"
+            />
+
+        <TextView
+            android:id="@+id/tvHumidityValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular_font"
+            android:text="64%"
+            android:textSize="14sp"
+            android:textColor="#303345"
+            android:layout_gravity="center"
+            android:layout_marginStart="130dp"
+            />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/llWeatherDays"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llWeatherUtilHumidity"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="5dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold_font"
+            android:textColor="#313341"
+            android:text="Today"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold_font"
+            android:textColor="#D6996B"
+            android:layout_marginStart="25dp"
+            android:text="Tomorrow"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold_font"
+            android:textColor="#D6996B"
+            android:layout_marginStart="100dp"
+            android:layout_gravity="center"
+            android:text="Next 7 Days"
+            />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_icon_7days"
+            android:scaleType="fitCenter"
+            android:paddingTop="3dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/llLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llWeatherDays"
+        android:orientation="horizontal"
+        android:background="@drawable/row_progress_shape"
+        />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvWeatherHourly"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llLine"
+        android:layout_marginTop="1dp"
+        />
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
