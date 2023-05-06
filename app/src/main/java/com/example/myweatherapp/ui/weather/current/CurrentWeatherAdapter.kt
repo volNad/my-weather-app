@@ -22,12 +22,15 @@ class CurrentWeatherAdapter(private val forecast: List<Hour>) : RecyclerView.Ada
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val hour = forecast[position]
+
         holder.bind(hour)
+
 
         if(position != 0) {
             holder.llMain.setBackgroundResource(R.drawable.weather_rv_oval_layout_inactive)
         } else {
             holder.llMain.setBackgroundResource(R.drawable.weather_rv_oval_layout_active)
+            holder.tvTextTime.text = "now"
         }
     }
 
@@ -93,5 +96,9 @@ class CurrentWeatherAdapter(private val forecast: List<Hour>) : RecyclerView.Ada
             }
 
         }
+    }
+
+    private fun isTimeIsNow(time: Int): Boolean {
+        return time == 0
     }
 }
