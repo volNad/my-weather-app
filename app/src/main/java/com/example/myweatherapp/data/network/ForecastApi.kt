@@ -15,7 +15,7 @@ interface ForecastApi {
     @GET("forecast.json")
     suspend fun getForecastWeatherData(
         @Query("q") city: String,
-        @Query("days") days: Int = 1
+        @Query("days") days: Int = 8
     ): CurrentWeatherResponse
 
 

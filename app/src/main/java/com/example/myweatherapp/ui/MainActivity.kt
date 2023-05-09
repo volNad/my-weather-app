@@ -7,15 +7,18 @@ import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.location.LocationManager
 import android.location.LocationRequest
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,12 +26,17 @@ import com.example.myweatherapp.data.db.entity.Hour
 import com.example.myweatherapp.data.network.ForecastApi
 import com.example.myweatherapp.data.network.WeatherApi
 import com.example.myweatherapp.data.network.response.CurrentWeatherResponse
+import com.example.myweatherapp.data.utils.Constants
+import com.example.myweatherapp.data.utils.Constants.isTodaySelected
+import com.example.myweatherapp.data.utils.Constants.isTomorrowSelected
 import com.example.myweatherapp.ui.weather.current.CurrentWeatherAdapter
 import com.example.myweatherapp.ui.weather.current.ItemMarginDecoration
+import com.example.myweatherapp.ui.weather.forecast.ForecastActivity
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -44,6 +52,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.*
@@ -59,6 +68,10 @@ class MainActivity : AppCompatActivity(){
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CurrentWeatherAdapter
     private lateinit var layoutManager: LinearLayoutManager
+    lateinit var cityEntered: String
+    var cityFound: Boolean = false
+
+
 
 
 
@@ -68,7 +81,14 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.pgCurrent.visibility = View.VISIBLE
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        Handler().postDelayed({
+            // Hide progress bar
+            binding.pgCurrent.visibility = View.GONE
+        }, 700)
+
+
 
 
         binding.ivSearch.setOnClickListener {
@@ -77,6 +97,9 @@ class MainActivity : AppCompatActivity(){
             binding.etSearchCity.visibility = View.VISIBLE
             binding.btnSearchCity.visibility = View.VISIBLE
         }
+
+
+
 
 
 
@@ -113,6 +136,10 @@ class MainActivity : AppCompatActivity(){
                 }).onSameThread().check()
         }
 
+        binding.ivMore.setOnClickListener {
+            requestLocationData()
+        }
+
     }
 
     private fun showRationalDialogForPermissions() {
@@ -147,8 +174,26 @@ class MainActivity : AppCompatActivity(){
       mFusedLocationClient.lastLocation.addOnSuccessListener {location ->
           val longitude = location.longitude
           val latitude = location.latitude
+
           if(latitude != null && longitude != null) {
               CoroutineScope(Dispatchers.Main).launch {
+
+
+
+
+
+                  binding.tvSevenDays.setOnClickListener {
+                      val intent = Intent(this@MainActivity, ForecastActivity::class.java)
+                      if (cityFound) {
+                          intent.putExtra("city", cityEntered)
+                      } else {
+                          intent.putExtra("city", "$latitude,$longitude")
+                      }
+
+
+                      startActivity(intent)
+                  }
+
 
               try {
                   binding.btnSearchCity.setOnClickListener {
@@ -157,11 +202,16 @@ class MainActivity : AppCompatActivity(){
                       binding.ivPoint.visibility = View.VISIBLE
                       binding.etSearchCity.visibility = View.GONE
                       binding.btnSearchCity.visibility = View.GONE
+                      cityEntered = textCity.toString()
+                      cityFound = true
 
 
                       CoroutineScope(Dispatchers.Main).launch{
                           val forecastDeferred = async { forecastApi.getForecastWeatherData("$textCity") }
                           val currentWeatherDeferred = async { weatherApi.getWeatherData("$textCity") }
+
+
+
 
                           // Wait for both requests to complete
                           val forecastWeather = forecastDeferred.await()
@@ -194,12 +244,50 @@ class MainActivity : AppCompatActivity(){
 
                           // Update UI with hourly forecast data
                           val weatherList = forecastWeather.forecast.forecastday.flatMap { it.hour }
+                              .filter { val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")
+                                  LocalDateTime.parse(it.time, dateTimeFormatter).isAfter(LocalDateTime.now().minusHours(1))
+                              }
+                              .take(25)
                           adapter = CurrentWeatherAdapter(weatherList)
                           recyclerView = findViewById(R.id.rvWeatherHourly)
                           layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
                           recyclerView.layoutManager = layoutManager
                           recyclerView.adapter = adapter
-                          recyclerView.addItemDecoration(ItemMarginDecoration(3))
+
+
+                          binding?.tvTomorrow?.setOnClickListener {
+                              val weatherList = forecastWeather.forecast.forecastday.flatMap { it.hour }
+                                  .filter { val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")
+                                      LocalDateTime.parse(it.time, dateTimeFormatter).isAfter(LocalDateTime.now().plusHours(23))
+                                  }
+                                  .take(25)
+                              adapter = CurrentWeatherAdapter(weatherList)
+                              recyclerView = findViewById(R.id.rvWeatherHourly)
+                              layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+                              recyclerView.layoutManager = layoutManager
+                              recyclerView.adapter = adapter
+                              binding?.tvTomorrow?.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.active_black))
+                              binding?.tvToday?.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.inactive_black))
+                              isTodaySelected = false
+                              isTomorrowSelected = true
+                          }
+
+                          binding?.tvToday?.setOnClickListener {
+                              val weatherList = forecastWeather.forecast.forecastday.flatMap { it.hour }
+                                  .filter { val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")
+                                      LocalDateTime.parse(it.time, dateTimeFormatter).isAfter(LocalDateTime.now().minusHours(1))
+                                  }
+                                  .take(25)
+                              adapter = CurrentWeatherAdapter(weatherList)
+                              recyclerView = findViewById(R.id.rvWeatherHourly)
+                              layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+                              recyclerView.layoutManager = layoutManager
+                              recyclerView.adapter = adapter
+                              binding?.tvTomorrow?.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.inactive_black))
+                              binding?.tvToday?.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.active_black))
+                              isTodaySelected = true
+                              isTomorrowSelected = false
+                          }
 
                       }
 
@@ -245,20 +333,67 @@ class MainActivity : AppCompatActivity(){
                   binding?.tvWeatherType?.text = condition
                   binding?.ivWeather?.setImageResource(weatherIcon)
 
+                  binding?.tvTomorrow?.setOnClickListener {
+                      val weatherList = forecastWeather.forecast.forecastday.flatMap { it.hour }
+                          .filter { val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")
+                              LocalDateTime.parse(it.time, dateTimeFormatter).isAfter(LocalDateTime.now().plusHours(23))
+                          }
+                          .take(25)
+                      adapter = CurrentWeatherAdapter(weatherList)
+                      recyclerView = findViewById(R.id.rvWeatherHourly)
+                      layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+                      recyclerView.layoutManager = layoutManager
+                      recyclerView.adapter = adapter
+                      isTomorrowSelected = true
+                      adapter.notifyDataSetChanged()
+                      binding?.tvTomorrow?.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.active_black))
+                      binding?.tvToday?.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.inactive_black))
+                      isTodaySelected = false
+                      isTomorrowSelected = true
+                      }
+
+                  binding?.tvToday?.setOnClickListener {
+                      val weatherList = forecastWeather.forecast.forecastday.flatMap { it.hour }
+                          .filter { val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")
+                              LocalDateTime.parse(it.time, dateTimeFormatter).isAfter(LocalDateTime.now().minusHours(1))
+                          }
+                          .take(25)
+                      adapter = CurrentWeatherAdapter(weatherList)
+                      recyclerView = findViewById(R.id.rvWeatherHourly)
+                      layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
+                      recyclerView.layoutManager = layoutManager
+                      recyclerView.adapter = adapter
+
+                      binding?.tvTomorrow?.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.inactive_black))
+                      binding?.tvToday?.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.active_black))
+                      isTodaySelected = true
+                      isTomorrowSelected = false
+                  }
+
                   // Update UI with hourly forecast data
                   val weatherList = forecastWeather.forecast.forecastday.flatMap { it.hour }
+
+                      .filter { val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm")
+                          LocalDateTime.parse(it.time, dateTimeFormatter).isAfter(LocalDateTime.now().minusHours(1))
+                      }
+                      .take(25)
                   adapter = CurrentWeatherAdapter(weatherList)
                   recyclerView = findViewById(R.id.rvWeatherHourly)
                   layoutManager = LinearLayoutManager(this@MainActivity, LinearLayoutManager.HORIZONTAL, false)
                   recyclerView.layoutManager = layoutManager
                   recyclerView.adapter = adapter
-                  recyclerView.addItemDecoration(ItemMarginDecoration(3))
+
+
+
+
 
 
 
               }
+
       }
       }
+
   }
 
 private fun dateToDayFormatter(date: String): String{
@@ -283,7 +418,7 @@ private fun dateToDayFormatter(date: String): String{
     private fun getWeatherIconDependOnResponse(code: Int): Int {
         return when (code) {
             1000 -> R.drawable.sunny
-            1003 -> R.drawable.cloudy
+            1003 -> R.drawable.sunny_cloudy
             1006 -> R.drawable.cloudy
             1009 -> R.drawable.cloudy
             1030 -> R.drawable.cloudy
@@ -335,9 +470,6 @@ private fun dateToDayFormatter(date: String): String{
     }
 
 
-    fun showMessage(view: View, message: String) {
-        Snackbar.make(view, message, Snackbar.LENGTH_LONG).show()
-    }
 
 
 

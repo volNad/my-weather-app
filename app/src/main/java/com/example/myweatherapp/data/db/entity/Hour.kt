@@ -2,6 +2,7 @@ package com.example.myweatherapp.data.db.entity
 
 import com.example.myweatherapp.data.db.entity.Condition
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Hour(
     val condition: Condition,
@@ -13,4 +14,4 @@ data class Hour(
     val time: String,
     @SerializedName("wind_kph")
     val windKph: Double
-)
+): Serializable

@@ -2,6 +2,7 @@ package com.example.myweatherapp.data.db.entity
 
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Location(
     val country: String,
@@ -14,4 +15,4 @@ data class Location(
     val region: String,
     @SerializedName("tz_id")
     val tzId: String
-)
+): Serializable

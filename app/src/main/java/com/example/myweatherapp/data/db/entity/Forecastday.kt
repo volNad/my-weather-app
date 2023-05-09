@@ -2,6 +2,7 @@ package com.example.myweatherapp.data.db.entity
 
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Forecastday(
     val date: String,
@@ -9,4 +10,4 @@ data class Forecastday(
     val dateEpoch: Int,
     val day: Day,
     val hour: List<Hour>
-)
+): Serializable

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.myweatherapp.ui.MainActivity"
-    android:background="@drawable/ic_background"
+    android:background="@drawable/ic_background_current"
     >
 
     <androidx.appcompat.widget.Toolbar
@@ -68,14 +68,14 @@
 
         <ImageButton
             android:id="@+id/ivMore"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:scaleType="fitXY"
             android:layout_gravity="end"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
             android:layout_marginEnd="25dp"
-            android:src="@drawable/more"
+            android:src="@drawable/ic_baseline_refresh_24"
             android:background="@android:color/transparent"
 
             />
@@ -102,8 +102,7 @@
         <TextView
             android:id="@+id/tvPlace"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="130dp"
             android:fontFamily="@font/inter_medium_font"
             android:textSize="35sp"
             android:textColor="#313341"
@@ -369,6 +368,7 @@
         >
 
         <TextView
+            android:id="@+id/tvToday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_bold_font"
@@ -377,6 +377,7 @@
             />
 
         <TextView
+            android:id="@+id/tvTomorrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_bold_font"
@@ -386,6 +387,7 @@
             />
 
         <TextView
+            android:id="@+id/tvSevenDays"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_bold_font"
@@ -396,13 +398,15 @@
             />
 
         <ImageView
-            android:layout_width="30dp"
-            android:layout_height="40dp"
+            android:id="@+id/ivSevenDays"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:src="@drawable/ic_icon_7days"
             android:scaleType="fitCenter"
             android:paddingTop="3dp"
             android:layout_gravity="center"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="-5dp"
+            android:visibility="visible"
             />
 
 
@@ -445,6 +449,17 @@
         android:visibility="invisible"
         android:background="@drawable/row_progress_shape"
         />
+
+    <ProgressBar
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/pgCurrent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

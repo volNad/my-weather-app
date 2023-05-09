@@ -10,4 +10,7 @@
     <color name="semi_transparent_white_36">#5AFFFFFF</color>
     <color name="semi_transparent_white_50">#CCFFFFFF</color>
     <color name="semi_transparent_white_90">#E6FFFFFF</color>
+    <color name="semi_transparent_white_70">#99FFFFFF</color>
+    <color name="active_black">#313341</color>
+    <color name="inactive_black">#D6996B</color>
 </resources>

@@ -5,6 +5,7 @@ import com.example.myweatherapp.data.db.entity.CurrentWeatherEntry
 import com.example.myweatherapp.data.db.entity.Forecast
 import com.example.myweatherapp.data.db.entity.Location
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class CurrentWeatherResponse(
     val forecast: Forecast,
@@ -13,4 +14,4 @@ data class CurrentWeatherResponse(
     val location: Location,
 
 
-)
+): Serializable

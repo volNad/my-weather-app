@@ -9,8 +9,11 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweatherapp.data.db.entity.Hour
+import com.example.myweatherapp.data.utils.Constants.isTodaySelected
+import com.example.myweatherapp.data.utils.Constants.isTomorrowSelected
 import com.example.myweatherapp.data.utils.formatTimeToHours
 import com.example.myweatherapp.data.utils.roundUpDoubleToString
+
 import com.example.weatherapp.R
 
 class CurrentWeatherAdapter(private val forecast: List<Hour>) : RecyclerView.Adapter<CurrentWeatherAdapter.ViewHolder>() {
@@ -28,10 +31,16 @@ class CurrentWeatherAdapter(private val forecast: List<Hour>) : RecyclerView.Ada
 
         if(position != 0) {
             holder.llMain.setBackgroundResource(R.drawable.weather_rv_oval_layout_inactive)
-        } else {
+        } else if (isTomorrowSelected && position == 0){
+            holder.llMain.setBackgroundResource(R.drawable.weather_rv_oval_layout_inactive)
+        }
+        else if(position == 0 && isTodaySelected) {
             holder.llMain.setBackgroundResource(R.drawable.weather_rv_oval_layout_active)
             holder.tvTextTime.text = "now"
         }
+
+
+
     }
 
     override fun getItemCount(): Int {

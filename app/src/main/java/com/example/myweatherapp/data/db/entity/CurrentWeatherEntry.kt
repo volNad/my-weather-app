@@ -2,8 +2,7 @@ package com.example.myweatherapp.data.db.entity
 
 
 import com.google.gson.annotations.SerializedName
-
-
+import java.io.Serializable
 
 
 data class CurrentWeatherEntry(
@@ -23,4 +22,4 @@ data class CurrentWeatherEntry(
     val windKph: Double,
     @SerializedName("wind_mph")
     val windMph: Double
-)
+): Serializable
