@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-const val API_KEY = "b6c5312ed3344ab682d64147231505"
+const val API_KEY = "ac5e4ccc88714926b21135006232606"
 
 interface WeatherApi {
     @GET("current.json")
